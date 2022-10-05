@@ -1,0 +1,10 @@
+{
+  "scripts": {
+		"lint": "yarn run lint:check",
+		"lint:check": "eslint .",
+		"lint:fix": "eslint --fix ."
+	},
+  "dependencies": {
+    "@byba/eslint-config": "^1.4.0"
+  }
+}
