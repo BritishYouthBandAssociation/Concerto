@@ -1,36 +1,35 @@
 'use strict';
 
-//const msal = require('@azure/msal-node');
+const msal = require('@azure/msal-node');
 const path = require('path');
 const fs = require('fs');
 const sharp = require('sharp');
 
 const { WritableStream } = require('node:stream/web');
 
-// async function getToken(config) {
-// 	const cca = new msal.ConfidentialClientApplication(config);
-// 	const resp = await cca.acquireTokenByClientCredential({
-// 		scopes: ['https://graph.microsoft.com/.default']
-// 	});
+async function getToken(config) {
+	const cca = new msal.ConfidentialClientApplication(config);
+	const resp = await cca.acquireTokenByClientCredential({
+		scopes: ['https://graph.microsoft.com/.default']
+	});
 
-// 	return resp.accessToken;
-// }
+	return resp.accessToken;
+}
 
-function listFiles(config, path) {
-	//const url = `https://graph.microsoft.com/v1.0/users/${config.files.user}/drive/root:${path}:/children`;
-	//const token = await getToken(config);
+async function listFiles(config, path) {
+	const url = `https://graph.microsoft.com/v1.0/users/${config.files.user}/drive/root:${path}:/children`;
+	const token = await getToken(config);
 
-	//we don't have the auth set up yet - TODO
-	// const res = await fetch(url, {
-	// 	headers: {
-	// 		'Authorization': `Bearer ${token}`
-	// 	}
-	// });
+	console.log(url);
 
-	config.path = path;
-	return require('./sample-response');
+	const res = await fetch(url, {
+		headers: {
+			'Authorization': `Bearer ${token}`
+		}
+	});
 
-	//return res;
+	const json = await res.json();
+	return json;
 }
 
 async function generateTitle(opts) {
@@ -66,7 +65,8 @@ async function generateTitle(opts) {
 
 	const buffer = Buffer.from(svgImage);
 
-	const logo = await sharp('byba.png').toBuffer();
+	const byba = await sharp('byba.png').flatten({background: '#FFF'}).resize({height: opts.height / 2}).ensureAlpha(0.4).toBuffer();
+	const tymba = await sharp('TYMBA.png').flatten({background: '#FFF'}).resize({height: opts.height / 2}).ensureAlpha(0.4).toBuffer();
 
 	await sharp({
 		create: {
@@ -82,9 +82,14 @@ async function generateTitle(opts) {
 		}
 	}).composite([
 		{
-			input: logo,
-			top: 200,
-			left: -400
+			input: byba,
+			top: opts.height / 4,
+			left: -300
+		},
+		{
+			input: tymba,
+			top: opts.height / 4,
+			left: opts.width - 270
 		},
 		{
 			input: buffer,
@@ -142,8 +147,13 @@ async function main() {
 		fs.mkdirSync(dlPath, { recursive: true });
 	}
 
-	const fileBase = path.join(config.files.root, String(new Date().getFullYear()));
-	const files = await listFiles(config, fileBase);
+	const fileBase = path.join(config.files.root, String(new Date().getFullYear() - 1));
+	const dirs = await listFiles(config, fileBase);
+
+	//todo: iterate dirs
+	console.log(dirs.value[0]);
+	const folder = path.join(fileBase, dirs.value[0].name);
+	const files = await listFiles(config, folder);
 
 	await Promise.all(files.value.map(f => processFile(dlPath, 'Brass Solo - 10 & Under', f)));
 
