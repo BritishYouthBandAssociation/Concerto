@@ -2,3 +2,6 @@ node_modules/
 
 # Eslint cache file
 .eslintcache
+
+#config
+config.json

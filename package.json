@@ -6,6 +6,7 @@
     "prepare": "husky install"
   },
   "dependencies": {
+    "@azure/msal-node": "^1.14.1",
     "@byba/eslint-config": "^1.4.0"
   },
   "devDependencies": {
