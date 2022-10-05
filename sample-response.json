@@ -1,0 +1,243 @@
+{
+    "@odata.context": "https://graph.microsoft.com/v1.0/$metadata#users('b7019d59-9130-480b-8d42-95eb1640b6ca')/drive/root/children",
+    "value": [
+        {
+            "createdDateTime": "2021-11-22T00:19:46Z",
+            "eTag": "\"{FD73EB7B-5F46-426B-8DED-FE1E135E5BB4},1\"",
+            "id": "01ZOTQXML35NZ72RS7NNBI33P6DYJV4W5U",
+            "lastModifiedDateTime": "2021-11-22T00:19:46Z",
+            "name": "titles",
+            "webUrl": "https://byba-my.sharepoint.com/personal/luke_taylor_byba_online/Documents/I%26E/2021/A1%20-%20Brass%2010%20%26%20Under/titles",
+            "cTag": "\"c:{FD73EB7B-5F46-426B-8DED-FE1E135E5BB4},0\"",
+            "size": 990979,
+            "createdBy": {
+                "user": {
+                    "email": "Luke.taylor@byba.online",
+                    "id": "b7019d59-9130-480b-8d42-95eb1640b6ca",
+                    "displayName": "Luke Taylor"
+                }
+            },
+            "lastModifiedBy": {
+                "user": {
+                    "email": "Luke.taylor@byba.online",
+                    "id": "b7019d59-9130-480b-8d42-95eb1640b6ca",
+                    "displayName": "Luke Taylor"
+                }
+            },
+            "parentReference": {
+                "driveType": "business",
+                "driveId": "b!yG9C5Dn2Qkm7yXaruZNE8quTEv6A9lNLpZsCcpQFiZLVd7O20lZ6Q69jyyH2kfFC",
+                "id": "01ZOTQXMOHPNQWUZMBBVBYYIHT3PC4JEN3",
+                "path": "/drive/root:/I&E/2021/A1 - Brass 10 & Under"
+            },
+            "fileSystemInfo": {
+                "createdDateTime": "2021-11-22T00:19:46Z",
+                "lastModifiedDateTime": "2021-11-22T00:19:46Z"
+            },
+            "folder": {
+                "childCount": 3
+            },
+            "shared": {
+                "scope": "users"
+            }
+        },
+        {
+            "@microsoft.graph.downloadUrl": "https://byba-my.sharepoint.com/personal/luke_taylor_byba_online/_layouts/15/download.aspx?UniqueId=81466064-7a38-4bad-8aa3-3bc55638affd&Translate=false&tempauth=eyJ0eXAiOiJKV1QiLCJhbGciOiJub25lIn0.eyJhdWQiOiIwMDAwMDAwMy0wMDAwLTBmZjEtY2UwMC0wMDAwMDAwMDAwMDAvYnliYS1teS5zaGFyZXBvaW50LmNvbUA3NWY3NmY4MC0xZDM3LTQxMzUtODIwNC1mZDk3OTU5ZmYyZmMiLCJpc3MiOiIwMDAwMDAwMy0wMDAwLTBmZjEtY2UwMC0wMDAwMDAwMDAwMDAiLCJuYmYiOiIxNjY0OTc5NjA2IiwiZXhwIjoiMTY2NDk4MzIwNiIsImVuZHBvaW50dXJsIjoiQzdVQ3hmV05RdElJMjRubTJYbTVNaExhUkxSc0UveTdqSmhHRXNDTGR6ST0iLCJlbmRwb2ludHVybExlbmd0aCI6IjE1MSIsImlzbG9vcGJhY2siOiJUcnVlIiwiY2lkIjoiTkdVM09EUTROVFF0TVRKbU1pMHpaVGcxTFRkbE56QXRaREJrWWpBek16SXdNR1JsIiwidmVyIjoiaGFzaGVkcHJvb2Z0b2tlbiIsInNpdGVpZCI6IlpUUTBNalptWXpndFpqWXpPUzAwT1RReUxXSmlZemt0TnpaaFltSTVPVE0wTkdZeSIsImFwcF9kaXNwbGF5bmFtZSI6IkdyYXBoIEV4cGxvcmVyIiwiZ2l2ZW5fbmFtZSI6Ikx1a2UiLCJmYW1pbHlfbmFtZSI6IlRheWxvciIsInNpZ25pbl9zdGF0ZSI6IltcImttc2lcIl0iLCJhcHBpZCI6ImRlOGJjOGI1LWQ5ZjktNDhiMS1hOGFkLWI3NDhkYTcyNTA2NCIsInRpZCI6Ijc1Zjc2ZjgwLTFkMzctNDEzNS04MjA0LWZkOTc5NTlmZjJmYyIsInVwbiI6Imx1a2UudGF5bG9yQGJ5YmEub25saW5lIiwicHVpZCI6IjEwMDMyMDAwOTFFNjFFNEYiLCJjYWNoZWtleSI6IjBoLmZ8bWVtYmVyc2hpcHwxMDAzMjAwMDkxZTYxZTRmQGxpdmUuY29tIiwic2NwIjoiYWxsZmlsZXMud3JpdGUgYWxscHJvZmlsZXMucmVhZCIsInR0IjoiMiIsInVzZVBlcnNpc3RlbnRDb29raWUiOm51bGwsImlwYWRkciI6IjIwLjE5MC4xNjkuMjQifQ.dUFTNkZ0WTBBTjU3VmtmY0xNdlZSeCtzNTVuMGJJNWVucU1yZktjYjBlZz0&ApiVersion=2.0",
+            "createdDateTime": "2021-11-15T17:01:53Z",
+            "eTag": "\"{81466064-7A38-4BAD-8AA3-3BC55638AFFD},6\"",
+            "id": "01ZOTQXMLEMBDICOD2VVFYVIZ3YVLDRL75",
+            "lastModifiedDateTime": "2021-11-24T22:39:23Z",
+            "name": "14th Eastleigh S&GB - George Funnell - A1.mp4",
+            "webUrl": "https://byba-my.sharepoint.com/personal/luke_taylor_byba_online/Documents/I%26E/2021/A1%20-%20Brass%2010%20%26%20Under/14th%20Eastleigh%20S%26GB%20-%20George%20Funnell%20-%20A1.mp4",
+            "cTag": "\"c:{81466064-7A38-4BAD-8AA3-3BC55638AFFD},2\"",
+            "media": {
+                "aboutVisibility": "all",
+                "analyticsVisibility": "all",
+                "isNoiseSuppressionControlShown": true,
+                "noiseSuppressionEnabledByDefault": false,
+                "tableOfContentsVisibility": "none",
+                "viewpoint": {
+                    "isTranscriptionAllowed": true
+                }
+            },
+            "size": 49450919,
+            "createdBy": {
+                "user": {
+                    "displayName": "Guest Contributor"
+                }
+            },
+            "lastModifiedBy": {
+                "user": {
+                    "email": "Luke.taylor@byba.online",
+                    "id": "b7019d59-9130-480b-8d42-95eb1640b6ca",
+                    "displayName": "Luke Taylor"
+                }
+            },
+            "parentReference": {
+                "driveType": "business",
+                "driveId": "b!yG9C5Dn2Qkm7yXaruZNE8quTEv6A9lNLpZsCcpQFiZLVd7O20lZ6Q69jyyH2kfFC",
+                "id": "01ZOTQXMOHPNQWUZMBBVBYYIHT3PC4JEN3",
+                "path": "/drive/root:/I&E/2021/A1 - Brass 10 & Under"
+            },
+            "file": {
+                "mimeType": "video/mp4",
+                "hashes": {
+                    "quickXorHash": "Mh3jX/JQPLaOGMDtgUHPslQW3ao="
+                }
+            },
+            "fileSystemInfo": {
+                "createdDateTime": "2021-11-15T17:01:53Z",
+                "lastModifiedDateTime": "2021-11-24T22:39:23Z"
+            },
+            "photo": {
+                "takenDateTime": "2021-11-15T16:33:07Z"
+            },
+            "shared": {
+                "scope": "users"
+            },
+            "video": {
+                "audioBitsPerSample": 16,
+                "audioChannels": 2,
+                "audioFormat": "AAC",
+                "audioSamplesPerSecond": 48000,
+                "bitrate": 3020552,
+                "duration": 123434,
+                "fourCC": "H264",
+                "frameRate": 29.97,
+                "height": 1080,
+                "width": 1920
+            }
+        },
+        {
+            "@microsoft.graph.downloadUrl": "https://byba-my.sharepoint.com/personal/luke_taylor_byba_online/_layouts/15/download.aspx?UniqueId=1f2c7186-b305-42cc-8f8c-636fe06dd340&Translate=false&tempauth=eyJ0eXAiOiJKV1QiLCJhbGciOiJub25lIn0.eyJhdWQiOiIwMDAwMDAwMy0wMDAwLTBmZjEtY2UwMC0wMDAwMDAwMDAwMDAvYnliYS1teS5zaGFyZXBvaW50LmNvbUA3NWY3NmY4MC0xZDM3LTQxMzUtODIwNC1mZDk3OTU5ZmYyZmMiLCJpc3MiOiIwMDAwMDAwMy0wMDAwLTBmZjEtY2UwMC0wMDAwMDAwMDAwMDAiLCJuYmYiOiIxNjY0OTc5NjA2IiwiZXhwIjoiMTY2NDk4MzIwNiIsImVuZHBvaW50dXJsIjoiVWxoM3BxeUdNRnZ2aVhPd0hPQ0tEOGV4SEViMGxFZklob3FaYnRFZVdLWT0iLCJlbmRwb2ludHVybExlbmd0aCI6IjE1MSIsImlzbG9vcGJhY2siOiJUcnVlIiwiY2lkIjoiTkdVM09EUTROVFF0TVRKbU1pMHpaVGcxTFRkbE56QXRaREJrWWpBek16SXdNR1JsIiwidmVyIjoiaGFzaGVkcHJvb2Z0b2tlbiIsInNpdGVpZCI6IlpUUTBNalptWXpndFpqWXpPUzAwT1RReUxXSmlZemt0TnpaaFltSTVPVE0wTkdZeSIsImFwcF9kaXNwbGF5bmFtZSI6IkdyYXBoIEV4cGxvcmVyIiwiZ2l2ZW5fbmFtZSI6Ikx1a2UiLCJmYW1pbHlfbmFtZSI6IlRheWxvciIsInNpZ25pbl9zdGF0ZSI6IltcImttc2lcIl0iLCJhcHBpZCI6ImRlOGJjOGI1LWQ5ZjktNDhiMS1hOGFkLWI3NDhkYTcyNTA2NCIsInRpZCI6Ijc1Zjc2ZjgwLTFkMzctNDEzNS04MjA0LWZkOTc5NTlmZjJmYyIsInVwbiI6Imx1a2UudGF5bG9yQGJ5YmEub25saW5lIiwicHVpZCI6IjEwMDMyMDAwOTFFNjFFNEYiLCJjYWNoZWtleSI6IjBoLmZ8bWVtYmVyc2hpcHwxMDAzMjAwMDkxZTYxZTRmQGxpdmUuY29tIiwic2NwIjoiYWxsZmlsZXMud3JpdGUgYWxscHJvZmlsZXMucmVhZCIsInR0IjoiMiIsInVzZVBlcnNpc3RlbnRDb29raWUiOm51bGwsImlwYWRkciI6IjIwLjE5MC4xNjkuMjQifQ.bWlqeS9CZlIraWtNRW1nMjY5TGU2MFM5Um5OUmVmZjFXbGVrRHcxZjMvQT0&ApiVersion=2.0",
+            "createdDateTime": "2021-11-15T17:06:35Z",
+            "eTag": "\"{1F2C7186-B305-42CC-8F8C-636FE06DD340},6\"",
+            "id": "01ZOTQXMMGOEWB6BNTZRBI7DDDN7QG3U2A",
+            "lastModifiedDateTime": "2021-11-24T22:39:29Z",
+            "name": "14th Eastleigh S&GB - Rowan Liddell - A1.mp4",
+            "webUrl": "https://byba-my.sharepoint.com/personal/luke_taylor_byba_online/Documents/I%26E/2021/A1%20-%20Brass%2010%20%26%20Under/14th%20Eastleigh%20S%26GB%20-%20Rowan%20Liddell%20-%20A1.mp4",
+            "cTag": "\"c:{1F2C7186-B305-42CC-8F8C-636FE06DD340},2\"",
+            "media": {
+                "aboutVisibility": "all",
+                "analyticsVisibility": "all",
+                "isNoiseSuppressionControlShown": true,
+                "noiseSuppressionEnabledByDefault": false,
+                "tableOfContentsVisibility": "none",
+                "viewpoint": {
+                    "isTranscriptionAllowed": true
+                }
+            },
+            "size": 81321281,
+            "createdBy": {
+                "user": {
+                    "displayName": "Guest Contributor"
+                }
+            },
+            "lastModifiedBy": {
+                "user": {
+                    "email": "Luke.taylor@byba.online",
+                    "id": "b7019d59-9130-480b-8d42-95eb1640b6ca",
+                    "displayName": "Luke Taylor"
+                }
+            },
+            "parentReference": {
+                "driveType": "business",
+                "driveId": "b!yG9C5Dn2Qkm7yXaruZNE8quTEv6A9lNLpZsCcpQFiZLVd7O20lZ6Q69jyyH2kfFC",
+                "id": "01ZOTQXMOHPNQWUZMBBVBYYIHT3PC4JEN3",
+                "path": "/drive/root:/I&E/2021/A1 - Brass 10 & Under"
+            },
+            "file": {
+                "mimeType": "video/mp4",
+                "hashes": {
+                    "quickXorHash": "MTLp5PNVGiDfICo3y0odt6IFOJk="
+                }
+            },
+            "fileSystemInfo": {
+                "createdDateTime": "2021-11-15T17:06:35Z",
+                "lastModifiedDateTime": "2021-11-24T22:39:29Z"
+            },
+            "photo": {
+                "takenDateTime": "2021-11-14T22:15:14Z"
+            },
+            "shared": {
+                "scope": "users"
+            },
+            "video": {
+                "audioBitsPerSample": 16,
+                "audioChannels": 2,
+                "audioFormat": "AAC",
+                "audioSamplesPerSecond": 48000,
+                "bitrate": 9534008,
+                "duration": 65642,
+                "fourCC": "H264",
+                "frameRate": 29.97,
+                "height": 1080,
+                "width": 1920
+            }
+        },
+        {
+            "@microsoft.graph.downloadUrl": "https://byba-my.sharepoint.com/personal/luke_taylor_byba_online/_layouts/15/download.aspx?UniqueId=d5d23550-814a-4759-8ca2-ceaad712cc7f&Translate=false&tempauth=eyJ0eXAiOiJKV1QiLCJhbGciOiJub25lIn0.eyJhdWQiOiIwMDAwMDAwMy0wMDAwLTBmZjEtY2UwMC0wMDAwMDAwMDAwMDAvYnliYS1teS5zaGFyZXBvaW50LmNvbUA3NWY3NmY4MC0xZDM3LTQxMzUtODIwNC1mZDk3OTU5ZmYyZmMiLCJpc3MiOiIwMDAwMDAwMy0wMDAwLTBmZjEtY2UwMC0wMDAwMDAwMDAwMDAiLCJuYmYiOiIxNjY0OTc5NjA2IiwiZXhwIjoiMTY2NDk4MzIwNiIsImVuZHBvaW50dXJsIjoiOXZlZzhkaFFHWm1HUFMycG9IZ1ZFTFFNTEpNUVNXL29ZZFBLMFQyKy9TRT0iLCJlbmRwb2ludHVybExlbmd0aCI6IjE1MSIsImlzbG9vcGJhY2siOiJUcnVlIiwiY2lkIjoiTkdVM09EUTROVFF0TVRKbU1pMHpaVGcxTFRkbE56QXRaREJrWWpBek16SXdNR1JsIiwidmVyIjoiaGFzaGVkcHJvb2Z0b2tlbiIsInNpdGVpZCI6IlpUUTBNalptWXpndFpqWXpPUzAwT1RReUxXSmlZemt0TnpaaFltSTVPVE0wTkdZeSIsImFwcF9kaXNwbGF5bmFtZSI6IkdyYXBoIEV4cGxvcmVyIiwiZ2l2ZW5fbmFtZSI6Ikx1a2UiLCJmYW1pbHlfbmFtZSI6IlRheWxvciIsInNpZ25pbl9zdGF0ZSI6IltcImttc2lcIl0iLCJhcHBpZCI6ImRlOGJjOGI1LWQ5ZjktNDhiMS1hOGFkLWI3NDhkYTcyNTA2NCIsInRpZCI6Ijc1Zjc2ZjgwLTFkMzctNDEzNS04MjA0LWZkOTc5NTlmZjJmYyIsInVwbiI6Imx1a2UudGF5bG9yQGJ5YmEub25saW5lIiwicHVpZCI6IjEwMDMyMDAwOTFFNjFFNEYiLCJjYWNoZWtleSI6IjBoLmZ8bWVtYmVyc2hpcHwxMDAzMjAwMDkxZTYxZTRmQGxpdmUuY29tIiwic2NwIjoiYWxsZmlsZXMud3JpdGUgYWxscHJvZmlsZXMucmVhZCIsInR0IjoiMiIsInVzZVBlcnNpc3RlbnRDb29raWUiOm51bGwsImlwYWRkciI6IjIwLjE5MC4xNjkuMjQifQ.UkRHRW9yZ1JPOUdMcEZkY1VBZTRlalFIeW0rOGd2andnMzVpZmo5UVRjND0&ApiVersion=2.0",
+            "createdDateTime": "2021-11-15T09:42:32Z",
+            "eTag": "\"{D5D23550-814A-4759-8CA2-CEAAD712CC7F},6\"",
+            "id": "01ZOTQXMKQGXJNKSUBLFDYZIWOVLLRFTD7",
+            "lastModifiedDateTime": "2021-11-24T22:39:36Z",
+            "name": "Lanesfield - Hallie - A1.mp4",
+            "webUrl": "https://byba-my.sharepoint.com/personal/luke_taylor_byba_online/Documents/I%26E/2021/A1%20-%20Brass%2010%20%26%20Under/Lanesfield%20-%20Hallie%20-%20A1.mp4",
+            "cTag": "\"c:{D5D23550-814A-4759-8CA2-CEAAD712CC7F},2\"",
+            "media": {
+                "aboutVisibility": "all",
+                "analyticsVisibility": "all",
+                "isNoiseSuppressionControlShown": true,
+                "noiseSuppressionEnabledByDefault": false,
+                "tableOfContentsVisibility": "none",
+                "viewpoint": {
+                    "isTranscriptionAllowed": true
+                }
+            },
+            "size": 8025992,
+            "createdBy": {
+                "user": {
+                    "displayName": "Guest Contributor"
+                }
+            },
+            "lastModifiedBy": {
+                "user": {
+                    "email": "Luke.taylor@byba.online",
+                    "id": "b7019d59-9130-480b-8d42-95eb1640b6ca",
+                    "displayName": "Luke Taylor"
+                }
+            },
+            "parentReference": {
+                "driveType": "business",
+                "driveId": "b!yG9C5Dn2Qkm7yXaruZNE8quTEv6A9lNLpZsCcpQFiZLVd7O20lZ6Q69jyyH2kfFC",
+                "id": "01ZOTQXMOHPNQWUZMBBVBYYIHT3PC4JEN3",
+                "path": "/drive/root:/I&E/2021/A1 - Brass 10 & Under"
+            },
+            "file": {
+                "mimeType": "video/mp4",
+                "hashes": {
+                    "quickXorHash": "zT31ElHpJG8uushhEG9wdLRV8to="
+                }
+            },
+            "fileSystemInfo": {
+                "createdDateTime": "2021-11-15T09:42:32Z",
+                "lastModifiedDateTime": "2021-11-24T22:39:36Z"
+            },
+            "shared": {
+                "scope": "users"
+            },
+            "video": {
+                "audioBitsPerSample": 16,
+                "audioChannels": 2,
+                "audioFormat": "AAC",
+                "audioSamplesPerSecond": 48000,
+                "bitrate": 593080,
+                "duration": 88167,
+                "fourCC": "H264",
+                "frameRate": 30,
+                "height": 656,
+                "width": 368
+            }
+        }
+    ]
+}
