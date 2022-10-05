@@ -7,7 +7,8 @@
   },
   "dependencies": {
     "@azure/msal-node": "^1.14.1",
-    "@byba/eslint-config": "^1.4.0"
+    "@byba/eslint-config": "^1.4.0",
+    "sharp": "^0.31.1"
   },
   "devDependencies": {
     "husky": "^8.0.1",
