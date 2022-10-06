@@ -4,21 +4,10 @@ const msal = require('@azure/msal-node');
 const path = require('path');
 const fs = require('fs');
 const sharp = require('sharp');
-const exec = require('child_process').exec;
 const { WritableStream } = require('node:stream/web');
 
-function execShell(cmd) {
-	console.log(`>>> OS: ${cmd}`);
-	return new Promise((resolve, reject) => {
-		exec(cmd, (error, stdout, stderr) => {
-			if (error) {
-				console.warn(error);
-				reject(error);
-			}
-			resolve(stdout ? stdout : stderr);
-		});
-	});
-}
+const VideoConverter = require('./VideoConverter');
+
 
 async function getToken(config) {
 	const cca = new msal.ConfidentialClientApplication(config);
@@ -31,9 +20,9 @@ async function getToken(config) {
 
 async function listFiles(config, path) {
 	const url = `https://graph.microsoft.com/v1.0/users/${config.files.user}/drive/root:${path}:/children`;
-	const token = await getToken(config);
 
 	console.log(url);
+	const token = await getToken(config);
 
 	const res = await fetch(url, {
 		headers: {
@@ -125,14 +114,16 @@ async function downloadFile(dlPath, fileData) {
 		}
 	});
 
-	res.body.pipeTo(stream);
+	await res.body.pipeTo(stream);
 
 	return dlPath;
 }
 
 async function processFile(dlPath, category, fileData) {
 	if (!('file' in fileData)) {
-		return;
+		console.error('Missing file data');
+		console.error(fileData);
+		return '';
 	}
 
 	const [band, name, _] = fileData.name.split('-');
@@ -154,12 +145,15 @@ async function processFile(dlPath, category, fileData) {
 	//3. Add title card to video
 	//yeahhh so this is where it gets horrible - we use ffmpeg here to do things!
 	//see https://stackoverflow.com/a/56786943/9034824
-	await execShell(`ffmpeg -loop 1 -framerate 30 -i "${title}" -c:v libx264 -t 5 -pix_fmt yuv420p "${title}.mp4" -y`);
-	await Promise.all([execShell(`ffmpeg -i "${title}.mp4" -c:v libx264 -c:a aac -b:a 160k -bsf:v h264_mp4toannexb -f mpegts -crf 32 "${title}.ts" -y`),
-		execShell(`ffmpeg -i "${dlPath}" -c:v libx264 -c:a aac -b:a 160k -bsf:v h264_mp4toannexb -f mpegts -crf 32 "${dlPath}.ts" -y`)]);
-	await execShell(`ffmpeg -i "concat:${title}.ts|${dlPath}.ts" -c copy -bsf:a aac_adtstoasc "${dlPath} - final.mp4" -y`);
+	const titlePath = await VideoConverter.imageToVideo(title, `${title}.mp4`, 5);
+	const video = await VideoConverter.mergeVideos(titlePath, dlPath, `${dlPath} - final.mp4`);
 
-	console.log(`Finished processing ${name}`);
+	//we no longer need the title video
+	fs.unlinkSync(titlePath);
+
+	console.log(`Finished processing ${name} - the video can be found at ${video}`);
+
+	return video;
 }
 
 async function main() {
@@ -177,10 +171,29 @@ async function main() {
 	console.log(dirs.value[0]);
 	const folder = path.join(fileBase, dirs.value[0].name);
 	const files = await listFiles(config, folder);
+	console.log(files);
 
-	await Promise.all(files.value.map(f => processFile(dlPath, 'Brass Solo - 10 & Under', f)));
+	const videos = (await Promise.all(files.value.map(f => processFile(dlPath, 'Brass Solo - 10 & Under', f)))).filter(x => x);
+
+	console.log('\n\n\n\n\n');
+	console.log('Videos:');
+	console.log(videos);
+	console.log('\n\n\n\n\n');
 
 	//4. Combine files
+	const master = 'tmp/A1.mp4';
+	if (videos.length === 1){
+		//rename only video to final video
+		fs.renameSync(videos[0], master);
+	} else {
+		await VideoConverter.mergeVideos(videos[0], videos[1], master);
+		//this would possibly be better as one method call, taking a dynamic number of videos?
+		for (let i = 2; i < videos.length; i++){
+			await VideoConverter.mergeVideos(master, videos[i], master);
+		}
+	}
+
+	console.log(`Final video merged and available at ${master}`);
 
 	//5. Upload final video
 }
