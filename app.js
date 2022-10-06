@@ -4,22 +4,20 @@ const msal = require('@azure/msal-node');
 const path = require('path');
 const fs = require('fs');
 const sharp = require('sharp');
-const { exec } = require('child_process');
+const exec = require('child_process').exec;
 const { WritableStream } = require('node:stream/web');
 
-function Cmd(){
-	this.execute = function(cmd){
-		return new Promise((resolve, reject) => {
-			exec(cmd, (error, stdout) => {
-				if (error){
-					reject(error);
-					return;
-				}
-
-				resolve(stdout);
-			});
+function execShell(cmd) {
+	console.log(`>>> OS: ${cmd}`);
+	return new Promise((resolve, reject) => {
+		exec(cmd, (error, stdout, stderr) => {
+			if (error) {
+				console.warn(error);
+				reject(error);
+			}
+			resolve(stdout ? stdout : stderr);
 		});
-	};
+	});
 }
 
 async function getToken(config) {
@@ -80,8 +78,8 @@ async function generateTitle(opts) {
 
 	const buffer = Buffer.from(svgImage);
 
-	const byba = await sharp('byba.png').flatten({background: '#FFF'}).resize({height: opts.height / 2}).ensureAlpha(0.4).toBuffer();
-	const tymba = await sharp('TYMBA.png').flatten({background: '#FFF'}).resize({height: opts.height / 2}).ensureAlpha(0.4).toBuffer();
+	const byba = await sharp('byba.png').flatten({ background: '#FFF' }).resize({ height: opts.height / 2 }).ensureAlpha(0.4).toBuffer();
+	const tymba = await sharp('TYMBA.png').flatten({ background: '#FFF' }).resize({ height: opts.height / 2 }).ensureAlpha(0.4).toBuffer();
 
 	await sharp({
 		create: {
@@ -155,10 +153,17 @@ async function processFile(dlPath, category, fileData) {
 
 	//3. Add title card to video
 	//yeahhh so this is where it gets horrible - we use ffmpeg here to do things!
-	const cmd = new Cmd();
-	await cmd.execute(`ffmpeg -loop 1 -framerate 30 -i "${title}" -c:v libx264 -t 5 -pix_fmt yuv420p "${title}.mp4"`);
-	await Promise.all([cmd.execute(`ffmpeg -i "${title}.mp4" -c copy -bsf:v h264_mp4toannexb -f mpegts "${title}.ts"`), cmd.execute(`ffmpeg -i "${dlPath}" -c copy -bsf:v h264_mp4toannexb -f mpegts "${dlPath}.ts"`)]);
-	await cmd.execute(`ffmpeg -i "concat:${title}.ts|${dlPath}.ts" -c copy -bsf:a aac_adtstoasc "${dlPath} - final.mp4"`);
+	//see https://stackoverflow.com/a/56786943/9034824
+	let res = await execShell(`ffmpeg -loop 1 -framerate 30 -i "${title}" -c:v libx264 -t 5 -pix_fmt yuv420p "${title}.mp4" -y`);
+	console.log(res);
+	res = await execShell(`ffmpeg -i "${title}.mp4" -c:v libx264 -c:a aac -b:a 160k -bsf:v h264_mp4toannexb -f mpegts -crf 32 "${title}.ts" -y`);
+	console.log(res);
+	res = await execShell(`ffmpeg -i "${dlPath}" -c:v libx264 -c:a aac -b:a 160k -bsf:v h264_mp4toannexb -f mpegts -crf 32 "${dlPath}.ts" -y`);
+	console.log(res);
+	res = await execShell(`ffmpeg -i "concat:${title}.ts|${dlPath}.ts" -c copy -bsf:a aac_adtstoasc "${dlPath} - final.mp4" -y`);
+	console.log(res);
+
+	console.log(`Finished processing ${name}`);
 }
 
 async function main() {
@@ -177,7 +182,10 @@ async function main() {
 	const folder = path.join(fileBase, dirs.value[0].name);
 	const files = await listFiles(config, folder);
 
-	await Promise.all(files.value.map(f => processFile(dlPath, 'Brass Solo - 10 & Under', f)));
+	for (let i = 0; i < files.value.length; i++){
+		await processFile(dlPath, 'Brass Solo - 10 & Under', files.value[i]);
+	}
+	//await Promise.all(files.value.map(f => processFile(dlPath, 'Brass Solo - 10 & Under', f)));
 
 	//4. Combine files
 
