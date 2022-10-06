@@ -154,14 +154,10 @@ async function processFile(dlPath, category, fileData) {
 	//3. Add title card to video
 	//yeahhh so this is where it gets horrible - we use ffmpeg here to do things!
 	//see https://stackoverflow.com/a/56786943/9034824
-	let res = await execShell(`ffmpeg -loop 1 -framerate 30 -i "${title}" -c:v libx264 -t 5 -pix_fmt yuv420p "${title}.mp4" -y`);
-	console.log(res);
-	res = await execShell(`ffmpeg -i "${title}.mp4" -c:v libx264 -c:a aac -b:a 160k -bsf:v h264_mp4toannexb -f mpegts -crf 32 "${title}.ts" -y`);
-	console.log(res);
-	res = await execShell(`ffmpeg -i "${dlPath}" -c:v libx264 -c:a aac -b:a 160k -bsf:v h264_mp4toannexb -f mpegts -crf 32 "${dlPath}.ts" -y`);
-	console.log(res);
-	res = await execShell(`ffmpeg -i "concat:${title}.ts|${dlPath}.ts" -c copy -bsf:a aac_adtstoasc "${dlPath} - final.mp4" -y`);
-	console.log(res);
+	await execShell(`ffmpeg -loop 1 -framerate 30 -i "${title}" -c:v libx264 -t 5 -pix_fmt yuv420p "${title}.mp4" -y`);
+	await Promise.all([execShell(`ffmpeg -i "${title}.mp4" -c:v libx264 -c:a aac -b:a 160k -bsf:v h264_mp4toannexb -f mpegts -crf 32 "${title}.ts" -y`),
+		execShell(`ffmpeg -i "${dlPath}" -c:v libx264 -c:a aac -b:a 160k -bsf:v h264_mp4toannexb -f mpegts -crf 32 "${dlPath}.ts" -y`)]);
+	await execShell(`ffmpeg -i "concat:${title}.ts|${dlPath}.ts" -c copy -bsf:a aac_adtstoasc "${dlPath} - final.mp4" -y`);
 
 	console.log(`Finished processing ${name}`);
 }
@@ -182,10 +178,7 @@ async function main() {
 	const folder = path.join(fileBase, dirs.value[0].name);
 	const files = await listFiles(config, folder);
 
-	for (let i = 0; i < files.value.length; i++){
-		await processFile(dlPath, 'Brass Solo - 10 & Under', files.value[i]);
-	}
-	//await Promise.all(files.value.map(f => processFile(dlPath, 'Brass Solo - 10 & Under', f)));
+	await Promise.all(files.value.map(f => processFile(dlPath, 'Brass Solo - 10 & Under', f)));
 
 	//4. Combine files
 
