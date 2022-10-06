@@ -4,8 +4,23 @@ const msal = require('@azure/msal-node');
 const path = require('path');
 const fs = require('fs');
 const sharp = require('sharp');
-
+const { exec } = require('child_process');
 const { WritableStream } = require('node:stream/web');
+
+function Cmd(){
+	this.execute = function(cmd){
+		return new Promise((resolve, reject) => {
+			exec(cmd, (error, stdout) => {
+				if (error){
+					reject(error);
+					return;
+				}
+
+				resolve(stdout);
+			});
+		});
+	};
+}
 
 async function getToken(config) {
 	const cca = new msal.ConfidentialClientApplication(config);
@@ -57,9 +72,9 @@ async function generateTitle(opts) {
 			font-size: 50px;
 		}
       </style>
-      <text x="50%" y="30%" text-anchor="middle" class="name">${opts.name.toUpperCase()}</text>
-	  <text x="50%" y="50%" text-anchor="middle" font-style="italic" class="band">${opts.band.replaceAll('&', '&amp;')}</text>
-	  <text x="50%" y="70%" text-anchor="middle" class="category">${opts.category.replaceAll('&', '&amp;')}</text>
+      <text x="50%" y="25%" text-anchor="middle" class="name">${opts.name.toUpperCase().replaceAll('&', '&amp;')}</text>
+	  <text x="50%" y="45%" text-anchor="middle" font-style="italic" class="band">${opts.band.replaceAll('&', '&amp;')}</text>
+	  <text x="50%" y="60%" text-anchor="middle" class="category">${opts.category.replaceAll('&', '&amp;')}</text>
     </svg>
 	`;
 
@@ -97,6 +112,8 @@ async function generateTitle(opts) {
 			left: 0
 		}
 	]).toFile(opts.path);
+
+	return opts.path;
 }
 
 async function downloadFile(dlPath, fileData) {
@@ -137,6 +154,11 @@ async function processFile(dlPath, category, fileData) {
 	});
 
 	//3. Add title card to video
+	//yeahhh so this is where it gets horrible - we use ffmpeg here to do things!
+	const cmd = new Cmd();
+	await cmd.execute(`ffmpeg -loop 1 -framerate 30 -i "${title}" -c:v libx264 -t 5 -pix_fmt yuv420p "${title}.mp4"`);
+	await Promise.all([cmd.execute(`ffmpeg -i "${title}.mp4" -c copy -bsf:v h264_mp4toannexb -f mpegts "${title}.ts"`), cmd.execute(`ffmpeg -i "${dlPath}" -c copy -bsf:v h264_mp4toannexb -f mpegts "${dlPath}.ts"`)]);
+	await cmd.execute(`ffmpeg -i "concat:${title}.ts|${dlPath}.ts" -c copy -bsf:a aac_adtstoasc "${dlPath} - final.mp4"`);
 }
 
 async function main() {
