@@ -20,8 +20,6 @@ async function getToken(config) {
 
 async function listFiles(config, path) {
 	const url = `https://graph.microsoft.com/v1.0/users/${config.files.user}/drive/root:${path}:/children`;
-
-	console.log(url);
 	const token = await getToken(config);
 
 	const res = await fetch(url, {
@@ -121,8 +119,6 @@ async function downloadFile(dlPath, fileData) {
 
 async function processFile(dlPath, category, fileData) {
 	if (!('file' in fileData)) {
-		console.error('Missing file data');
-		console.error(fileData);
 		return '';
 	}
 
@@ -145,11 +141,12 @@ async function processFile(dlPath, category, fileData) {
 	//3. Add title card to video
 	//yeahhh so this is where it gets horrible - we use ffmpeg here to do things!
 	//see https://stackoverflow.com/a/56786943/9034824
-	const titlePath = await VideoConverter.imageToVideo(title, `${title}.mp4`, 5);
-	const video = await VideoConverter.mergeVideos(titlePath, dlPath, `${dlPath} - final.mp4`);
+	const video = await VideoConverter.addTitleCard(title, dlPath, 5, `${dlPath} - final.mp4`);
+	//const titlePath = await VideoConverter.imageToVideo(title, `${title}.mp4`, 5);
+	//const video = await VideoConverter.mergeVideos(titlePath, dlPath, `${dlPath} - final.mp4`);
 
 	//we no longer need the title video
-	fs.unlinkSync(titlePath);
+	//fs.unlinkSync(titlePath);
 
 	console.log(`Finished processing ${name} - the video can be found at ${video}`);
 
@@ -168,17 +165,9 @@ async function main() {
 	const dirs = await listFiles(config, fileBase);
 
 	//todo: iterate dirs
-	console.log(dirs.value[0]);
 	const folder = path.join(fileBase, dirs.value[0].name);
 	const files = await listFiles(config, folder);
-	console.log(files);
-
 	const videos = (await Promise.all(files.value.map(f => processFile(dlPath, 'Brass Solo - 10 & Under', f)))).filter(x => x);
-
-	console.log('\n\n\n\n\n');
-	console.log('Videos:');
-	console.log(videos);
-	console.log('\n\n\n\n\n');
 
 	//4. Combine files
 	const master = 'tmp/A1.mp4';
