@@ -6,7 +6,8 @@ const fs = require('fs');
 const sharp = require('sharp');
 const { WritableStream } = require('node:stream/web');
 
-const {execShell} = require('./utils');
+const {removeMany} = require('./utils');
+const VideoConverter = require('./VideoConverter');
 
 
 async function getToken(config) {
@@ -140,47 +141,52 @@ async function processFile(dlPath, category, fileData) {
 
 	//3. Add title card to video
 	//yeahhh so this is where it gets horrible - we use ffmpeg here to do things!
-	const vidRaw = `${dlPath} - noAud.mp4`;
-	const audRaw = `${dlPath}.mp3`;
-	const titleVid = `${title}.mp4`;
-	const vidStream = `${dlPath}.ts`;
-	const titleStream = `${title}.ts`;
-	const tempJoin = `${dlPath}-join.ts`;
-	const mutedAll = `${dlPath} - muted.mp4`;
-	const all = `${dlPath} - all.mp4`;
+	const all = await VideoConverter.addTitleToVideo(title, dlPath, 5);
 
-	const streams = [titleStream, vidStream];
-	const files = [vidRaw, audRaw, titleVid, vidStream, titleStream, tempJoin, mutedAll];
-
-	await execShell(`ffmpeg -i "${dlPath}" -c:v copy -c:a libmp3lame -map 0:a "${audRaw}" -map 0:v "${vidRaw}" -y`);
-	await execShell(`ffmpeg -loop 1 -i "${title}" -c:v libx264 -framerate 30 -t 5 "${titleVid}" -y`);
-	await execShell(`ffmpeg -i "${titleVid}" -vcodec copy "${titleStream}" -y`);
-	await execShell(`ffmpeg -i "${vidRaw}" -vcodec copy "${vidStream}" -y`);
-
-	if (fs.existsSync(tempJoin)){
-		fs.unlinkSync(tempJoin);
-	}
-
-	for (let i = 0; i < streams.length; i++){
-		const data = fs.readFileSync(streams[i]);
-		fs.appendFileSync(tempJoin, data);
-	}
-
-	await execShell(`ffmpeg -i "${tempJoin}" -acodec copy -vcodec copy "${mutedAll}" -y`);
-	await execShell(`ffmpeg -i "${mutedAll}" -i "${audRaw}" -filter_complex "adelay=5000|5000" -c:v copy "${all}" -y`);
-
-	//aaand finally overwrite the old vid
-	fs.unlinkSync(dlPath);
-
-	//now let's tidy up
-	files.forEach(f => fs.unlinkSync(f));
+	removeMany([dlPath, title]);
 
 	console.log(`Finished processing ${name} - the video can be found at ${all}`);
 
 	return all;
 }
 
+async function processDirectory(config, fileBase, dlPath, directory){
+	const folder = path.join(fileBase, directory.name);
+	const files = await listFiles(config, folder);
+
+	const videos = (await Promise.all(files.value.map(f => processFile(dlPath, 'Brass Solo - 10 & Under', f)))).filter(x => x);
+
+	console.log();
+	console.log('Exported videos:');
+	console.log(videos);
+	console.log();
+
+	//4. Combine files
+	const master = path.join('tmp', `${directory.name}.mp4`);
+	if (videos.length === 0){
+		return '';
+	}
+
+	if (videos.length === 1){
+		//rename only video to final video
+		fs.renameSync(videos[0], master);
+	} else {
+		const tempJoin = await VideoConverter.combineVideos(...videos);
+		fs.renameSync(tempJoin, master);
+	}
+
+	removeMany(videos);
+
+	console.log(`Final video merged and available at ${master}`);
+
+	return master;
+}
+
 async function main() {
+	const start = new Date();
+	console.log(`Start: ${start}`);
+	console.log();
+
 	const config = require('./config');
 
 	const dlPath = path.join(__dirname, 'tmp');
@@ -189,29 +195,24 @@ async function main() {
 	}
 
 	const fileBase = path.join(config.files.root, String(new Date().getFullYear() - 1));
-	const dirs = await listFiles(config, fileBase);
+	const response = await listFiles(config, fileBase);
+	const dirs = response.value.filter(d => !['full','intro'].includes(d.name.toLowerCase()));
 
-	//todo: iterate dirs
-	const folder = path.join(fileBase, dirs.value[0].name);
-	const files = await listFiles(config, folder);
-	const videos = (await Promise.all(files.value.map(f => processFile(dlPath, 'Brass Solo - 10 & Under', f)))).filter(x => x);
+	//iterate dirs in batches, as all at once crashed my laptop :)
+	while (dirs.length > 0){
+		console.log(dirs.length);
 
-	//4. Combine files
-	// const master = 'tmp/A1.mp4';
-	// if (videos.length === 1){
-	// 	//rename only video to final video
-	// 	fs.renameSync(videos[0], master);
-	// } else {
-	// 	await VideoConverter.mergeVideos(videos[0], videos[1], master);
-	// 	//this would possibly be better as one method call, taking a dynamic number of videos?
-	// 	for (let i = 2; i < videos.length; i++){
-	// 		await VideoConverter.mergeVideos(master, videos[i], master);
-	// 	}
-	// }
+		const batch = dirs.splice(0, 3);
+		console.log(batch);
+		console.log();
 
-	//console.log(`Final video merged and available at ${master}`);
+		await Promise.all(batch.map(d => processDirectory(config, fileBase, dlPath, d))).catch(e => console.error(e));
+
+		console.log(dirs.length);
+	}
 
 	//5. Upload final video
+	//uploadVideo(config, 'tmp/A1.mp4', fileBase, 'full');
 }
 
 main().catch(e => {

@@ -1,6 +1,7 @@
 'use strict';
 
 const exec = require('child_process').exec;
+const fs = require('fs');
 
 module.exports = {
 	execShell(cmd) {
@@ -9,10 +10,14 @@ module.exports = {
 			exec(cmd, (error, stdout, stderr) => {
 				if (error) {
 					console.warn(error);
-					reject(error);
+					return reject(error);
 				}
 				resolve(stdout ? stdout : stderr);
 			});
 		});
+	},
+
+	removeMany(files){
+		files.forEach(f => fs.unlinkSync(f));
 	}
 };
