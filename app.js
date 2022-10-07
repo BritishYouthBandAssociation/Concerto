@@ -153,8 +153,12 @@ async function processFile(dlPath, category, fileData) {
 async function processDirectory(config, fileBase, dlPath, directory){
 	const folder = path.join(fileBase, directory.name);
 	const files = await listFiles(config, folder);
+	const videos = [];
 
-	const videos = (await Promise.all(files.value.map(f => processFile(dlPath, 'Brass Solo - 10 & Under', f)))).filter(x => x);
+	//sync crashes the server!
+	for (let i = 0; i < files.value.length; i++){
+		videos.push(await processFile(dlPath, 'Brass Solo - 10 & Under', files.value[i]));
+	}
 
 	console.log();
 	console.log('Exported videos:');
@@ -202,7 +206,8 @@ async function main() {
 	while (dirs.length > 0){
 		console.log(dirs.length);
 
-		const batch = dirs.splice(0, 3);
+		const batch = dirs.splice(0, 1);
+		//multiple crash the server!
 		console.log(batch);
 		console.log();
 
