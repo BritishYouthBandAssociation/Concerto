@@ -17,7 +17,11 @@ module.exports = {
 		});
 	},
 
-	removeMany(files){
-		files.forEach(f => fs.unlinkSync(f));
+	removeMany(files) {
+		files.forEach(f => {
+			if (fs.existsSync(f)) {
+				fs.unlinkSync(f);
+			}
+		});
 	}
 };

@@ -123,7 +123,14 @@ async function processFile(dlPath, category, fileData) {
 		return '';
 	}
 
-	const [band, name, _] = fileData.name.split('-');
+	const parts = path.parse(fileData.name).name.split('-');
+	if (parts.length < 2){
+		throw new Error(`Invalid filename: ${fileData.name}`);
+	}
+
+	const name = parts[0].trim();
+	const band = parts[1].trim();
+
 	console.log(`Processing entry for ${name} of ${band}, who has entered category ${category}...`);
 
 	//1. Download file
@@ -153,12 +160,8 @@ async function processFile(dlPath, category, fileData) {
 async function processDirectory(config, fileBase, dlPath, directory){
 	const folder = path.join(fileBase, directory.name);
 	const files = await listFiles(config, folder);
-	const videos = [];
 
-	//sync crashes the server!
-	for (let i = 0; i < files.value.length; i++){
-		videos.push(await processFile(dlPath, 'Brass Solo - 10 & Under', files.value[i]));
-	}
+	const videos = (await Promise.all(files.value.map(f => processFile(dlPath, directory.name, f)))).filter(x => x);
 
 	console.log();
 	console.log('Exported videos:');
@@ -187,10 +190,6 @@ async function processDirectory(config, fileBase, dlPath, directory){
 }
 
 async function main() {
-	const start = new Date();
-	console.log(`Start: ${start}`);
-	console.log();
-
 	const config = require('./config');
 
 	const dlPath = path.join(__dirname, 'tmp');
@@ -198,22 +197,17 @@ async function main() {
 		fs.mkdirSync(dlPath, { recursive: true });
 	}
 
-	const fileBase = path.join(config.files.root, String(new Date().getFullYear() - 1));
+	const fileBase = path.join(config.files.root, String(new Date().getFullYear()));
 	const response = await listFiles(config, fileBase);
-	const dirs = response.value.filter(d => !['full','intro'].includes(d.name.toLowerCase()));
+	const dirs = response.value.filter(d => !['full','intro', 'unprocessed'].includes(d.name.toLowerCase()));
 
 	//iterate dirs in batches, as all at once crashed my laptop :)
 	while (dirs.length > 0){
-		console.log(dirs.length);
-
-		const batch = dirs.splice(0, 1);
-		//multiple crash the server!
+		const batch = dirs.splice(0, 3);
 		console.log(batch);
 		console.log();
 
 		await Promise.all(batch.map(d => processDirectory(config, fileBase, dlPath, d))).catch(e => console.error(e));
-
-		console.log(dirs.length);
 	}
 
 	//5. Upload final video
