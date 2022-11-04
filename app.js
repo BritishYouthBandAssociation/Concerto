@@ -9,6 +9,13 @@ const { WritableStream } = require('node:stream/web');
 const {removeMany} = require('./utils');
 const VideoConverter = require('./VideoConverter');
 
+const today = new Date();
+const titleConfig = {
+	width: 1920,
+	height: 1080,
+	title: `I&E ${today.getFullYear()}`
+};
+
 
 async function getToken(config) {
 	const cca = new msal.ConfidentialClientApplication(config);
@@ -141,8 +148,8 @@ async function processFile(dlPath, category, fileData) {
 		category: category.trim(),
 		band: band.trim(),
 		name: name.trim(),
-		width: 1920,
-		height: 1080,
+		width: titleConfig.width,
+		height: titleConfig.height,
 		path: dlPath + '.jpg'
 	});
 
@@ -161,12 +168,27 @@ async function processDirectory(config, fileBase, dlPath, directory){
 	const folder = path.join(fileBase, directory.name);
 	const files = await listFiles(config, folder);
 
-	const videos = (await Promise.all(files.value.map(f => processFile(dlPath, directory.name, f)))).filter(x => x);
+	if (!files || !files.value || files.value.length === 0){
+		console.log(`No videos found in ${directory.name} - skipping!`);
+		return;
+	}
+
+	const videos = (await Promise.all([...files.value.map(f => processFile(dlPath, directory.name, f)), generateTitle({
+		category: '',
+		band: directory.name,
+		name: titleConfig.title,
+		width: titleConfig.width,
+		height: titleConfig.height,
+		path: path.join('tmp', `${directory.name}.jpg`)
+	})])).filter(x => x);
 
 	console.log();
 	console.log('Exported videos:');
 	console.log(videos);
 	console.log();
+
+	const title = videos.pop();
+	const withTitle = await VideoConverter.addTitleToVideo(title, videos[0], 5);
 
 	//4. Combine files
 	const master = path.join('tmp', `${directory.name}.mp4`);
@@ -182,7 +204,9 @@ async function processDirectory(config, fileBase, dlPath, directory){
 		fs.renameSync(tempJoin, master);
 	}
 
-	removeMany(videos);
+	fs.renameSync(withTitle, master);
+
+	removeMany([...videos, title]);
 
 	console.log(`Final video merged and available at ${master}`);
 
