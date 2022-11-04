@@ -65,9 +65,9 @@ async function generateTitle(opts) {
 			font-size: 50px;
 		}
       </style>
-      <text x="50%" y="25%" text-anchor="middle" class="name">${opts.name.toUpperCase().replaceAll('&', '&amp;')}</text>
-	  <text x="50%" y="45%" text-anchor="middle" font-style="italic" class="band">${opts.band.replaceAll('&', '&amp;')}</text>
-	  <text x="50%" y="60%" text-anchor="middle" class="category">${opts.category.replaceAll('&', '&amp;')}</text>
+      <text x="50%" y="35%" text-anchor="middle" class="name">${opts.name.toUpperCase().replaceAll('&', '&amp;')}</text>
+	  <text x="50%" y="50%" text-anchor="middle" font-style="italic" class="band">${opts.band.replaceAll('&', '&amp;')}</text>
+	  <text x="50%" y="65%" text-anchor="middle" class="category">${opts.category.replaceAll('&', '&amp;')}</text>
     </svg>
 	`;
 
@@ -75,6 +75,7 @@ async function generateTitle(opts) {
 
 	const byba = await sharp('byba.png').flatten({ background: '#FFF' }).resize({ height: opts.height / 2 }).ensureAlpha(0.4).toBuffer();
 	const tymba = await sharp('TYMBA.png').flatten({ background: '#FFF' }).resize({ height: opts.height / 2 }).ensureAlpha(0.4).toBuffer();
+	const sponsor = await sharp('marching arts.png').flatten({ background: '#FFF' }).resize({ height: opts.height * 0.1}).toBuffer();
 
 	await sharp({
 		create: {
@@ -98,6 +99,11 @@ async function generateTitle(opts) {
 			input: tymba,
 			top: opts.height / 4,
 			left: opts.width - 270
+		},
+		{
+			input: sponsor,
+			left: opts.width * 0.4,
+			top: opts.height * 0.85
 		},
 		{
 			input: buffer,
