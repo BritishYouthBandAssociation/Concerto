@@ -151,9 +151,9 @@ async function processFile(dlPath, category, fileData) {
 
 	//2. Generate title card
 	const title = await generateTitle({
-		category: category.trim(),
-		band: band.trim(),
-		name: name.trim(),
+		category: category?.trim() ?? '',
+		band: band?.trim() ?? '',
+		name: name?.trim() ?? '',
 		width: titleConfig.width,
 		height: titleConfig.height,
 		path: dlPath + '.jpg'
