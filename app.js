@@ -137,12 +137,12 @@ async function processFile(dlPath, category, fileData) {
 	}
 
 	const parts = path.parse(fileData.name).name.split('-');
-	if (parts.length < 2){
-		throw new Error(`Invalid filename: ${fileData.name}`);
-	}
-
 	const name = parts[0].trim();
-	const band = parts[1].trim();
+	let band = '';
+
+	if (parts.length >= 2){
+		band = parts[1].trim();
+	}
 
 	console.log(`Processing entry for ${name} of ${band}, who has entered category ${category}...`);
 
@@ -194,7 +194,8 @@ async function processDirectory(config, fileBase, dlPath, directory){
 	console.log();
 
 	const title = videos.pop();
-	const withTitle = await VideoConverter.addTitleToVideo(title, videos[0], 5);
+	const withoutTitle = videos[0];
+	videos[0] = await VideoConverter.addTitleToVideo(title, videos[0], 5);
 
 	//4. Combine files
 	const master = path.join('tmp', `${directory.name}.mp4`);
@@ -210,9 +211,7 @@ async function processDirectory(config, fileBase, dlPath, directory){
 		fs.renameSync(tempJoin, master);
 	}
 
-	fs.renameSync(withTitle, master);
-
-	removeMany([...videos, title]);
+	removeMany([...videos, title, withoutTitle]);
 
 	console.log(`Final video merged and available at ${master}`);
 
@@ -234,7 +233,6 @@ async function main() {
 	//iterate dirs in batches, as all at once crashed my laptop :)
 	while (dirs.length > 0){
 		const batch = dirs.splice(0, 3);
-		console.log(batch);
 		console.log();
 
 		await Promise.all(batch.map(d => processDirectory(config, fileBase, dlPath, d))).catch(e => console.error(e));
