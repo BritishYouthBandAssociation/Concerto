@@ -6,8 +6,9 @@ const fs = require('fs');
 const sharp = require('sharp');
 const { WritableStream } = require('node:stream/web');
 
-const {removeMany} = require('./utils');
+const { removeMany, removeFolder } = require('./utils');
 const VideoConverter = require('./VideoConverter');
+const Colour = require('./Colour');
 
 const today = new Date();
 const titleConfig = {
@@ -75,7 +76,7 @@ async function generateTitle(opts) {
 
 	const byba = await sharp('byba.png').flatten({ background: '#FFF' }).resize({ height: opts.height / 2 }).ensureAlpha(0.4).toBuffer();
 	const tymba = await sharp('TYMBA.png').flatten({ background: '#FFF' }).resize({ height: opts.height / 2 }).ensureAlpha(0.4).toBuffer();
-	const sponsor = await sharp('marching arts.png').flatten({ background: '#FFF' }).resize({ height: opts.height * 0.1}).toBuffer();
+	const sponsor = await sharp('marching arts.png').flatten({ background: '#FFF' }).resize({ height: opts.height * 0.1 }).toBuffer();
 
 	await sharp({
 		create: {
@@ -140,7 +141,7 @@ async function processFile(dlPath, category, fileData) {
 	const name = parts[0].trim();
 	let band = '';
 
-	if (parts.length >= 2){
+	if (parts.length >= 2) {
 		band = parts[1].trim();
 	}
 
@@ -164,19 +165,17 @@ async function processFile(dlPath, category, fileData) {
 	const all = await VideoConverter.addTitleToVideo(title, dlPath, 5);
 
 	removeMany([dlPath, title]);
-
-	console.log(`Finished processing ${name} - the video can be found at ${all}`);
-
 	return all;
 }
 
-async function processDirectory(config, fileBase, dlPath, directory){
+async function processDirectory(config, fileBase, dlPath, directory) {
 	const folder = path.join(fileBase, directory.name);
 	const files = await listFiles(config, folder);
 
-	if (!files || !files.value || files.value.length === 0){
-		console.log(`No videos found in ${directory.name} - skipping!`);
-		return;
+	if (!files || !files.value || files.value.length === 0) {
+		Colour.writeColouredText(`No videos found in ${directory.name} - skipping!`, Colour.OPTIONS.FG_YELLOW);
+		console.log();
+		return '';
 	}
 
 	const videos = (await Promise.all([...files.value.map(f => processFile(dlPath, directory.name, f)), generateTitle({
@@ -188,22 +187,18 @@ async function processDirectory(config, fileBase, dlPath, directory){
 		path: path.join('tmp', `${directory.name}.jpg`)
 	})])).filter(x => x);
 
-	console.log();
-	console.log('Exported videos:');
-	console.log(videos);
-	console.log();
-
 	const title = videos.pop();
 	const withoutTitle = videos[0];
 	videos[0] = await VideoConverter.addTitleToVideo(title, videos[0], 5);
 
 	//4. Combine files
 	const master = path.join('tmp', `${directory.name}.mp4`);
-	if (videos.length === 0){
+	if (videos.length === 0) {
+		console.log();
 		return '';
 	}
 
-	if (videos.length === 1){
+	if (videos.length === 1) {
 		//rename only video to final video
 		fs.renameSync(videos[0], master);
 	} else {
@@ -212,31 +207,56 @@ async function processDirectory(config, fileBase, dlPath, directory){
 	}
 
 	removeMany([...videos, title, withoutTitle]);
-
-	console.log(`Final video merged and available at ${master}`);
+	console.log();
 
 	return master;
+}
+
+function printDone(finalPath) {
+	Colour.writeColouredText(`
+-	
+	 ▄▀▀█▄   ▄▀▀▀▀▄    ▄▀▀▀▀▄          ▄▀▀█▄▄   ▄▀▀▀▀▄   ▄▀▀▄ ▀▄  ▄▀▀█▄▄▄▄ 
+	▐ ▄▀ ▀▄ █    █    █    █          █ ▄▀   █ █      █ █  █ █ █ ▐  ▄▀   ▐ 
+	  █▄▄▄█ ▐    █    ▐    █          ▐ █    █ █      █ ▐  █  ▀█   █▄▄▄▄▄  
+	 ▄▀   █     █         █             █    █ ▀▄    ▄▀   █   █    █    ▌  
+	█   ▄▀    ▄▀▄▄▄▄▄▄▀ ▄▀▄▄▄▄▄▄▀      ▄▀▄▄▄▄▀   ▀▀▀▀   ▄▀   █    ▄▀▄▄▄▄   
+	▐   ▐     █         █             █     ▐           █    ▐    █    ▐   
+	          ▐         ▐             ▐                 ▐         ▐        
+-
+	`, Colour.OPTIONS.BG_GREEN, Colour.OPTIONS.FG_WHITE);
+	console.log();
+	Colour.writeColouredText(`Your videos are available in ${finalPath}`, Colour.OPTIONS.FG_GREEN, Colour.OPTIONS.UNDERSCORE);
 }
 
 async function main() {
 	const config = require('./config');
 
 	const dlPath = path.join(__dirname, 'tmp');
-	if (!fs.existsSync(dlPath)) {
-		fs.mkdirSync(dlPath, { recursive: true });
+	if (fs.existsSync(dlPath)) {
+		//clean up after previous run
+		Colour.writeColouredText(`Removing ${dlPath} ready for new run`, Colour.OPTIONS.FG_RED);
+		removeFolder(dlPath);
 	}
+
+	fs.mkdirSync(dlPath, { recursive: true });
 
 	const fileBase = path.join(config.files.root, String(new Date().getFullYear()));
 	const response = await listFiles(config, fileBase);
-	const dirs = response.value.filter(d => !['full','intro', 'unprocessed'].includes(d.name.toLowerCase()));
+	const dirs = response.value.filter(d => !['full', 'intro', 'unprocessed'].includes(d.name.toLowerCase()));
+
+	let categories = [];
 
 	//iterate dirs in batches, as all at once crashed my laptop :)
-	while (dirs.length > 0){
+	while (dirs.length > 0) {
 		const batch = dirs.splice(0, 3);
-		console.log();
-
-		await Promise.all(batch.map(d => processDirectory(config, fileBase, dlPath, d))).catch(e => console.error(e));
+		const processed = await Promise.all(batch.map(d => processDirectory(config, fileBase, dlPath, d)));
+		categories = categories.concat(processed.filter(x => x));
 	}
+
+	const final = await VideoConverter.combineVideos(...categories);
+	fs.renameSync(final, path.join(dlPath, `I-E ${today.getFullYear()}.mp4`));
+
+	printDone(dlPath);
 
 	//5. Upload final video
 	//uploadVideo(config, 'tmp/A1.mp4', fileBase, 'full');

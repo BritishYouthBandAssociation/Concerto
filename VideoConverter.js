@@ -57,10 +57,6 @@ class VideoConverter{
 			throw 'Expected one or more videos to convert!';
 		}
 
-		console.log('Combining videos:');
-		console.log(videos);
-		console.log();
-
 		const output = `${videos[0]}-all.mp4`;
 
 		const streams = await Promise.all(videos.map(v => this.#videoToStream(v)));
