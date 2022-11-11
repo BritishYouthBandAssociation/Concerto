@@ -116,8 +116,8 @@ async function generateTitle(opts) {
 	return opts.path;
 }
 
-async function downloadFile(dlPath, fileData) {
-	dlPath = path.join(dlPath, fileData.name);
+async function downloadFile(dlPath, fileData, prefix = '') {
+	dlPath = path.join(dlPath, prefix + fileData.name);
 	console.log(`Saving file to ${dlPath}...`);
 	const res = await fetch(fileData['@microsoft.graph.downloadUrl']);
 	const fileStream = fs.createWriteStream(dlPath);
@@ -145,10 +145,12 @@ async function processFile(dlPath, category, fileData) {
 		band = parts[1].trim();
 	}
 
-	console.log(`Processing entry for ${name} of ${band}, who has entered category ${category}...`);
+	Colour.writeColouredText(`Processing entry for ${name} of ${band}, who has entered category ${category}...`, Colour.OPTIONS.FG_MAGENTA);
 
 	//1. Download file
-	dlPath = await downloadFile(dlPath, fileData);
+	dlPath = await downloadFile(dlPath, fileData, category.substring(0,2));
+
+	Colour.writeColouredText(`Downloaded ${name} of ${band} to ${dlPath}`, Colour.OPTIONS.FG_CYAN);
 
 	//2. Generate title card
 	const title = await generateTitle({
@@ -160,11 +162,17 @@ async function processFile(dlPath, category, fileData) {
 		path: dlPath + '.jpg'
 	});
 
+	Colour.writeColouredText(`Generated title card for ${name} of ${band} at ${title}`, Colour.OPTIONS.FG_CYAN);
+
 	//3. Add title card to video
 	//yeahhh so this is where it gets horrible - we use ffmpeg here to do things!
 	const all = await VideoConverter.addTitleToVideo(title, dlPath, 5);
 
+	Colour.writeColouredText(`Added title card to ${name} of ${band}`, Colour.OPTIONS.FG_CYAN);
+
 	removeMany([dlPath, title]);
+
+	Colour.writeColouredText(`Finished processing ${name} of ${band} - final video is available at ${all}`, Colour.OPTIONS.FG_MAGENTA);
 	return all;
 }
 
