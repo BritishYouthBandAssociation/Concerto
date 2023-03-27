@@ -30,9 +30,7 @@ class Colour{
 
 	static writeColouredText(text, ...params){
 		params = params.map(p => this.#getValue(p)).join('');
-		console.log(params);
-		console.log(text);
-		console.log(this.#getValue(values.RESET));
+		console.log(params + text + this.#getValue(values.RESET));
 	}
 
 	static #getValue(escape){
